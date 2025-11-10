@@ -103,25 +103,29 @@
         /**
          * Wrapper for fetch with exponential backoff for resilience against transient errors.
          */
-        async function callGeminiAPI(systemPrompt, userQuery, responseSchema) {
-    try {
-        const response = await fetch('/api/gemini', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ systemPrompt, userQuery, responseSchema })
-        });
-        if (!response.ok) {
-            throw new Error('Failed to reach backend API');
+        async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    if (response.status >= 400 && response.status < 500) {
+                        console.error("Client error:", response.status, await response.text());
+                        return null; 
+                    }
+                    console.warn(`Attempt ${i + 1} failed, retrying in ${delay / 1000}s...`);
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2; // Exponential backoff
+                } catch (error) {
+                    console.error("Fetch error:", error);
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+            console.error("All fetch attempts failed.");
+            return null;
         }
-        return await response.json();
-    } catch (err) {
-        console.error('Backend error:', err);
-        validationMessage = "Error contacting AI server. Please try again later.";
-        navigateTo(SCREENS.RESUME_INPUT);
-        return null;
-    }
-}
-
 
         /**
          * Extracts text from a user-uploaded PDF file using pdf.js.
@@ -153,47 +157,24 @@
          * Calls the Gemini API with a structured prompt and schema.
          */
         async function callGeminiAPI(systemPrompt, userQuery, responseSchema) {
-            const apiKey = "AIzaSyASmkdwQkdqMkfs_wrEdzO-uAwZXR2wZls"; // API key is handled by the environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: responseSchema,
-                }
-            };
-
-            const result = await fetchWithRetry(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            isLoading = false;
-
-            if (result && result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                try {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    return JSON.parse(jsonString);
-                } catch (e) {
-                    console.error("Failed to parse JSON response:", e);
-                    // Critical error: Go back to the input screen to show the error
-                    validationMessage = "Error processing AI response. Please try again.";
-                    navigateTo(SCREENS.RESUME_INPUT);
-                    return null;
-                }
-            } else {
-                console.error("Invalid API response structure:", result);
-                // Critical error: Go back to the input screen to show the error
-                validationMessage = "Failed to get a response from AI. Please try again.";
-                navigateTo(SCREENS.RESUME_INPUT);
-                return null;
-            }
+    try {
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ systemPrompt, userQuery, responseSchema })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to reach backend API');
         }
+        return await response.json();
+    } catch (err) {
+        console.error('Backend error:', err);
+        validationMessage = "Error contacting AI server. Please try again later.";
+        navigateTo(SCREENS.RESUME_INPUT);
+        return null;
+    }
+}
+
         
         // --- Component Utility Functions (HTML Generation) ---
         
@@ -858,3 +839,4 @@
             `;
             document.head.appendChild(style);
         });
+
