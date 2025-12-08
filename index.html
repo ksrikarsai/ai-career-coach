@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Coach | Career Analysis</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Load pdf.js for PDF text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
+
+<link rel="stylesheet" href="style.css"> 
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Application Container -->
+    <div id="app" class="w-full max-w-7xl mx-auto">
+        <!-- Content will be injected here by JavaScript -->
+    </div>
+    
+    <!-- About Modal (Hidden by default) -->
+    <div id="about-modal" class="modal-overlay hidden">
+        <!-- Added max-h-[80vh] and overflow-y-auto for scrollability -->
+        <div class="glowing-box p-8 sm:p-10 rounded-2xl w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto">
+            <h2 class="text-3xl font-bold text-orange-500 mb-4">About the AI Career Coach</h2>
+            
+            <div class="text-gray-300 space-y-4">
+                <p class="leading-relaxed">
+                    This coach is designed to be your unbiased, 2025-ready career guide. Its primary purpose is to help you <strong>analyze</strong> your existing profile (resume) or your target market (job role) and provide actionable, honest feedback. We focus on bridging the gap between your current skills and the fast-evolving demands of the Indian tech job market, particularly emphasizing <strong>AI/Automation resilience</strong>.
+                </p>
+                
+                <h3 class="text-xl font-semibold text-gray-200 mt-6">A Vibe Coding Project</h3>
+                
+                <p class="text-sm leading-relaxed text-gray-400">
+                    This is a personal project, built with the intention of providing genuine, community-focused career advice (Vibe Coding).
+                </p>
+                
+                <p class="text-base leading-relaxed">
+                    It is particularly suited for:
+                    <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li><strong>Students & Freshers:</strong> Getting a realistic check on their resume against modern ATS systems.</li>
+                        <li><strong>Early Career Professionals:</strong> Identifying high-growth skills and planning realistic career path transitions.</li>
+                    </ul>
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-200 mt-6">Connect with the Creator</h3>
+                
+                <p class="text-base">
+                    <strong>LinkedIn:</strong> <a href="https://linkedin.com/in/srikara-sai-koneru/" target="_blank" class="text-orange-400 hover:text-orange-300 transition-colors underline">
+                        linkedin.com/in/srikara-sai-koneru/
+                    </a>
+                </p>
+                <p class="text-base">
+                    <strong>GitHub:</strong> <a href="https://github.com/ksrikarsai" target="_blank" class="text-orange-400 hover:text-orange-300 transition-colors underline">
+                        github.com/ksrikarsai
+                    </a>
+                </p>
+                
+            </div>
+            
+            <div class="flex justify-end mt-8">
+                <button class="back-button haptic-button" onclick="closeModal('about-modal')">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script src="script.js"></script> 
+</body>
+</html>
